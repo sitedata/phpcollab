@@ -15,6 +15,7 @@ class Request
     protected $tableCollab;
     protected $strings;
     protected $databaseType;
+    protected $initrequest;
 
     /**
      * Request constructor.
@@ -24,6 +25,7 @@ class Request
         $this->tableCollab = $GLOBALS['tableCollab'];
         $this->strings = $GLOBALS['strings'];
         $this->databaseType = $GLOBALS['databaseType'];
+        $this->initrequest = $GLOBALS['initrequest'];
     }
 
     /**
@@ -153,10 +155,10 @@ class Request
      */
     public function openSorting($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["sorting"];
+        $sql = $this->initrequest["sorting"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -211,10 +213,10 @@ class Request
      */
     public function openCalendar($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["calendar"];
+        $sql = $this->initrequest["calendar"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -256,10 +258,10 @@ class Request
      */
     public function openNotes($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["notes"];
+        $sql = $this->initrequest["notes"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -297,10 +299,10 @@ class Request
      */
     public function openLogs($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["logs"];
+        $sql = $this->initrequest["logs"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -335,10 +337,10 @@ class Request
      */
     public function openNotifications($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["notifications"];
+        $sql = $this->initrequest["notifications"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -384,10 +386,10 @@ class Request
      */
     public function openMembers($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
         global $sql;
-        $sql = $initrequest["members"];
+        $sql = $this->initrequest["members"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -431,9 +433,9 @@ class Request
      */
     public function openProjects($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["projects"];
+        $sql = $this->initrequest["projects"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -481,10 +483,10 @@ class Request
      */
     public function openFiles($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
         global $sql;
-        $sql = $initrequest["files"];
+        $sql = $this->initrequest["files"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -539,10 +541,10 @@ class Request
      */
     public function openOrganizations($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["organizations"];
+        $sql = $this->initrequest["organizations"];
         $sql .= ' ' . $querymore;
 
         if (($this->databaseType == "mysql") && $start != "") {
@@ -588,10 +590,10 @@ class Request
      */
     public function openTopics($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["topics"];
+        $sql = $this->initrequest["topics"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -631,9 +633,9 @@ class Request
      */
     public function openPosts($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["posts"];
+        $sql = $this->initrequest["posts"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -668,10 +670,10 @@ class Request
      */
     public function openAssignments($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["assignments"];
+        $sql = $this->initrequest["assignments"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -712,10 +714,10 @@ class Request
      */
     public function openReports($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["reports"];
+        $sql = $this->initrequest["reports"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -755,11 +757,11 @@ class Request
      */
     public function openTeams($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
 
-        $sql = $initrequest["teams"];
+        $sql = $this->initrequest["teams"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -810,10 +812,10 @@ class Request
      */
     public function openTasks($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["tasks"];
+        $sql = $this->initrequest["tasks"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -891,9 +893,9 @@ class Request
      */
     public function openSubtasks($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["subtasks"];
+        $sql = $this->initrequest["subtasks"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -948,9 +950,9 @@ class Request
      */
     public function openPhases($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["phases"];
+        $sql = $this->initrequest["phases"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -982,9 +984,9 @@ class Request
      */
     public function openUpdates($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["updates"];
+        $sql = $this->initrequest["updates"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1018,9 +1020,9 @@ class Request
      */
     public function openSupportRequests($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["support_requests"];
+        $sql = $this->initrequest["support_requests"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1057,9 +1059,9 @@ class Request
      */
     public function openSupportPosts($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["support_posts"];
+        $sql = $this->initrequest["support_posts"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1091,9 +1093,9 @@ class Request
      */
     public function openBookmarks($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["bookmarks"];
+        $sql = $this->initrequest["bookmarks"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1132,9 +1134,9 @@ class Request
      */
     public function openBookmarksCategories($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["bookmarks_categories"];
+        $sql = $this->initrequest["bookmarks_categories"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1161,9 +1163,9 @@ class Request
      */
     public function openInvoices($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["invoices"];
+        $sql = $this->initrequest["invoices"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1204,9 +1206,9 @@ class Request
      */
     public function openInvoicesItems($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["invoices_items"];
+        $sql = $this->initrequest["invoices_items"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1246,9 +1248,9 @@ class Request
      */
     public function openServices($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["services"];
+        $sql = $this->initrequest["services"];
         $sql .= ' ' . $querymore;
         if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1276,9 +1278,9 @@ class Request
      */
     public function openNewsDesk($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["newsdeskposts"];
+        $sql = $this->initrequest["newsdeskposts"];
         $sql .= ' ' . $querymore;
         if (($this->databaseType == "mysql") && $start != "") {
             $sql .= " LIMIT $start,$rows";
@@ -1310,10 +1312,10 @@ class Request
      */
     public function openNewsDeskComments($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["newsdeskcomments"];
+        $sql = $this->initrequest["newsdeskcomments"];
         $sql .= ' ' . $querymore;
 
         if (($this->databaseType == "mysql") && $start != "") {
@@ -1377,10 +1379,10 @@ class Request
      */
     function openModules($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $tableCollab, $strings, $res, $row;
 
         $this->connectClass();
-        $sql = $initrequest["modules"];
+        $sql = $this->initrequest["modules"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -1409,10 +1411,10 @@ class Request
      */
     function openFunctionalities($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["functionalities"];
+        $sql = $this->initrequest["functionalities"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -1440,10 +1442,10 @@ class Request
      */
     function openControls($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["controls"];
+        $sql = $this->initrequest["controls"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -1472,9 +1474,9 @@ class Request
      */
     function openRequirements($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["requirements"];
+        $sql = $this->initrequest["requirements"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -1518,9 +1520,9 @@ class Request
      */
     function openInteresteds($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
         $this->connectClass();
-        $sql = $initrequest["interesteds"];
+        $sql = $this->initrequest["interesteds"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
@@ -1559,10 +1561,10 @@ class Request
      */
     function openRequirementStatus($querymore, $start = "", $rows = "")
     {
-        global $row, $initrequest;
+        global $row;
 
         $this->connectClass();
-        $sql = $initrequest["requirement_status"];
+        $sql = $this->initrequest["requirement_status"];
         $sql .= ' ' . $querymore;
 
         if ($this->databaseType == "mysql" && $start != "") {
