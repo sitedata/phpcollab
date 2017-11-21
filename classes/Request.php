@@ -12,12 +12,18 @@ namespace phpCollab;
 class Request
 {
     public $index;
+    protected $tableCollab;
+    protected $strings;
+    protected $databaseType;
 
     /**
      * Request constructor.
      */
     public function __construct()
     {
+        $this->tableCollab = $GLOBALS['tableCollab'];
+        $this->strings = $GLOBALS['strings'];
+        $this->databaseType = $GLOBALS['databaseType'];
     }
 
     /**
@@ -33,42 +39,39 @@ class Request
      */
     public function connectClass()
     {
-        global $strings, $res, $databaseType;
+        global $res;
 
-        if ($databaseType == "mysql") {
+        if ($this->databaseType == "mysql") {
             try {
                 $res = mysqli_connect(MYSERVER, MYLOGIN, MYPASSWORD);
             } catch (\Exception $e) {
-                echo $strings["error_server"];
-                exit;
+                echo $this->strings["error_server"];
+                throw new \Exception($this->strings["error_server"]);
             }
             try {
                 mysqli_select_db($res, MYDATABASE);
             } catch (\Exception $e) {
-                echo $strings["error_database"];
-                exit;
+                throw new \Exception($this->strings["error_database"]);
             }
         }
 
-        if ($databaseType == "postgresql") {
+        if ($this->databaseType == "postgresql") {
             $res = pg_connect(
                 "host=" . MYSERVER . " port=5432 dbname=" . MYDATABASE
                 . " user=" . MYLOGIN . " password=" . MYPASSWORD . ""
             );
         }
 
-        if ($databaseType == "sqlserver") {
+        if ($this->databaseType == "sqlserver") {
             try {
                 $res = mssql_connect(MYSERVER, MYLOGIN, MYPASSWORD);
             } catch (\Exception $e) {
-                echo $strings["error_server"];
-                exit;
+                throw new \Exception($this->strings["error_server"]);
             }
             try {
                 mssql_select_db(MYDATABASE, $res);
             } catch (\Exception $e) {
-                echo $strings["error_database"];
-                exit;
+                throw new \Exception($this->strings["error_database"]);
             }
         }
     }
@@ -78,19 +81,19 @@ class Request
      */
     public function query($sql)
     {
-        global $res, $databaseType, $comptRequest;
+        global $res, $comptRequest;
 
         $comptRequest = $comptRequest + 1;
 
-        if ($databaseType == "mysql") {
+        if ($this->databaseType == "mysql") {
             $this->index = mysqli_query($res, $sql);
         }
 
-        if ($databaseType == "postgresql") {
+        if ($this->databaseType == "postgresql") {
             $this->index = pg_query($res, $sql);
         }
 
-        if ($databaseType == "sqlserver") {
+        if ($this->databaseType == "sqlserver") {
             $this->index = mssql_query($sql, $res);
         }
     }
@@ -100,9 +103,9 @@ class Request
      */
     public function fetch()
     {
-        global $row, $databaseType, $res;
+        global $row, $res;
 
-        if ($databaseType == "mysql") {
+        if ($this->databaseType == "mysql") {
             @$row = mysqli_fetch_row($this->index);
 
             if (mysqli_errno($res) != 0) {
@@ -110,11 +113,11 @@ class Request
             }
         }
 
-        if ($databaseType == "postgresql") {
+        if ($this->databaseType == "postgresql") {
             $row = pg_fetch_row($this->index);
         }
 
-        if ($databaseType == "sqlserver") {
+        if ($this->databaseType == "sqlserver") {
             $row = mssql_fetch_row($this->index);
         }
 
@@ -126,22 +129,23 @@ class Request
      */
     public function close()
     {
-        global $res, $databaseType;
-        if ($databaseType == "mysql") {
+        global $res;
+        if ($this->databaseType == "mysql") {
             @mysqli_free_result($this->index);
             @mysqli_close($res);
         }
-        if ($databaseType == "postgresql") {
+        if ($this->databaseType == "postgresql") {
             @pg_free_result($this->index);
             @pg_close($res);
         }
-        if ($databaseType == "sqlserver") {
+        if ($this->databaseType == "sqlserver") {
             @mssql_free_result($this->index);
             @mssql_close($res);
         }
     }
 
     //results sorting
+
     /**
      * @param $querymore
      * @param string $start
@@ -149,17 +153,17 @@ class Request
      */
     public function openSorting($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["sorting"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -199,6 +203,7 @@ class Request
     }
 
     //results calendar
+
     /**
      * @param $querymore
      * @param string $start
@@ -206,16 +211,16 @@ class Request
      */
     public function openCalendar($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["calendar"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -243,6 +248,7 @@ class Request
     }
 
     //results notes
+
     /**
      * @param $querymore
      * @param string $start
@@ -250,17 +256,17 @@ class Request
      */
     public function openNotes($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["notes"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -283,6 +289,7 @@ class Request
     }
 
     //results logs
+
     /**
      * @param $querymore
      * @param string $start
@@ -290,17 +297,17 @@ class Request
      */
     public function openLogs($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["logs"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -320,6 +327,7 @@ class Request
     }
 
     //results notifications
+
     /**
      * @param $querymore
      * @param string $start
@@ -327,16 +335,16 @@ class Request
      */
     public function openNotifications($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["notifications"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -368,6 +376,7 @@ class Request
     }
 
     //results members
+
     /**
      * @param $querymore
      * @param string $start
@@ -375,15 +384,15 @@ class Request
      */
     public function openMembers($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         global $sql;
         $sql = $initrequest["members"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -414,6 +423,7 @@ class Request
     }
 
     //results projects
+
     /**
      * @param $querymore
      * @param string $start
@@ -421,16 +431,16 @@ class Request
      */
     public function openProjects($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["projects"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -463,6 +473,7 @@ class Request
     }
 
     //results files
+
     /**
      * @param $querymore
      * @param string $start
@@ -470,17 +481,17 @@ class Request
      */
     public function openFiles($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         global $sql;
         $sql = $initrequest["files"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -520,6 +531,7 @@ class Request
     }
 
     //results organizations
+
     /**
      * @param $querymore
      * @param string $start
@@ -527,17 +539,17 @@ class Request
      */
     public function openOrganizations($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["organizations"];
         $sql .= ' ' . $querymore;
 
-        if (($databaseType == "mysql") && $start != "") {
+        if (($this->databaseType == "mysql") && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -568,6 +580,7 @@ class Request
     }
 
     //results topics
+
     /**
      * @param $querymore
      * @param string $start
@@ -575,17 +588,17 @@ class Request
      */
     public function openTopics($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["topics"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -610,6 +623,7 @@ class Request
     }
 
     //results posts
+
     /**
      * @param $querymore
      * @param string $start
@@ -617,16 +631,16 @@ class Request
      */
     public function openPosts($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["posts"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -646,6 +660,7 @@ class Request
     }
 
     //results assignments
+
     /**
      * @param $querymore
      * @param string $start
@@ -653,17 +668,17 @@ class Request
      */
     public function openAssignments($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["assignments"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -689,6 +704,7 @@ class Request
     }
 
     //results reports
+
     /**
      * @param $querymore
      * @param string $start
@@ -696,17 +712,17 @@ class Request
      */
     public function openReports($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["reports"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -731,6 +747,7 @@ class Request
     }
 
     //results teams
+
     /**
      * @param $querymore
      * @param string $start
@@ -738,18 +755,18 @@ class Request
      */
     public function openTeams($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
 
         $sql = $initrequest["teams"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -785,6 +802,7 @@ class Request
     }
 
     //results tasks
+
     /**
      * @param $querymore
      * @param string $start
@@ -792,17 +810,17 @@ class Request
      */
     public function openTasks($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["tasks"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -847,12 +865,13 @@ class Request
     }
 
     //compute Average completion of a task
+
     /**
      * @param $querymore
      */
     public function openAvgTasks($querymore)
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = "select avg(completion) from {$tableCollab["subtasks"]} where task = '$querymore'";
 
@@ -864,6 +883,7 @@ class Request
     }
 
     //results subtasks
+
     /**
      * @param $querymore
      * @param string $start
@@ -871,14 +891,14 @@ class Request
      */
     public function openSubtasks($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["subtasks"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -920,6 +940,7 @@ class Request
     }
 
     //results phases
+
     /**
      * @param $querymore
      * @param string $start
@@ -927,14 +948,14 @@ class Request
      */
     public function openPhases($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["phases"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -953,6 +974,7 @@ class Request
     }
 
     //results updates
+
     /**
      * @param $querymore
      * @param string $start
@@ -960,14 +982,14 @@ class Request
      */
     public function openUpdates($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["updates"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -988,6 +1010,7 @@ class Request
     }
 
     //results support requests
+
     /**
      * @param $querymore
      * @param string $start
@@ -995,14 +1018,14 @@ class Request
      */
     public function openSupportRequests($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["support_requests"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1026,6 +1049,7 @@ class Request
     }
 
     //results support posts
+
     /**
      * @param $querymore
      * @param string $start
@@ -1033,14 +1057,14 @@ class Request
      */
     public function openSupportPosts($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["support_posts"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1059,6 +1083,7 @@ class Request
     }
 
     //results bookmarks
+
     /**
      * @param $querymore
      * @param string $start
@@ -1066,14 +1091,14 @@ class Request
      */
     public function openBookmarks($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["bookmarks"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1099,6 +1124,7 @@ class Request
     }
 
     //results bookmarks_categories
+
     /**
      * @param $querymore
      * @param string $start
@@ -1106,14 +1132,14 @@ class Request
      */
     public function openBookmarksCategories($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["bookmarks_categories"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1127,6 +1153,7 @@ class Request
     }
 
     //results invoices
+
     /**
      * @param $querymore
      * @param string $start
@@ -1134,14 +1161,14 @@ class Request
      */
     public function openInvoices($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["invoices"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1169,6 +1196,7 @@ class Request
     }
 
     //results invoices_items
+
     /**
      * @param $querymore
      * @param string $start
@@ -1176,14 +1204,14 @@ class Request
      */
     public function openInvoicesItems($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["invoices_items"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1210,6 +1238,7 @@ class Request
     }
 
     //results services
+
     /**
      * @param $querymore
      * @param string $start
@@ -1217,14 +1246,14 @@ class Request
      */
     public function openServices($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["services"];
         $sql .= ' ' . $querymore;
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1239,6 +1268,7 @@ class Request
     }
 
     //results newsdeskpost 29/05/2003 by fullo
+
     /**
      * @param $querymore
      * @param string $start
@@ -1246,14 +1276,14 @@ class Request
      */
     public function openNewsDesk($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["newsdeskposts"];
         $sql .= ' ' . $querymore;
-        if (($databaseType == "mysql") && $start != "") {
+        if (($this->databaseType == "mysql") && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1272,6 +1302,7 @@ class Request
     }
 
     // results newsdeskcomments 02/06/2003 by fullo
+
     /**
      * @param $querymore
      * @param string $start
@@ -1279,17 +1310,17 @@ class Request
      */
     public function openNewsDeskComments($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["newsdeskcomments"];
         $sql .= ' ' . $querymore;
 
-        if (($databaseType == "mysql") && $start != "") {
+        if (($this->databaseType == "mysql") && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1304,6 +1335,7 @@ class Request
     }
 
     //results teams
+
     /**
      * @param $querymore
      * @param string $start
@@ -1311,18 +1343,18 @@ class Request
      */
     public function openNewsDeskRelated($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
 
         $sql = "SELECT DISTINCT pro.id, pro.name, tea.id FROM {$tableCollab["teams"]} tea, {$tableCollab["projects"]} pro WHERE pro.id = tea.project ";
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1337,6 +1369,7 @@ class Request
     }
 
 //results modules 05/02/2007 by cacu100 
+
     /**
      * @param $querymore
      * @param string $start
@@ -1344,17 +1377,17 @@ class Request
      */
     function openModules($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["modules"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1368,6 +1401,7 @@ class Request
 
 
 //results functionalities 05/02/2007 by cacu100 
+
     /**
      * @param $querymore
      * @param string $start
@@ -1375,17 +1409,17 @@ class Request
      */
     function openFunctionalities($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["functionalities"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1398,6 +1432,7 @@ class Request
     }
 
 //results controls 05/02/2007 by cacu100 
+
     /**
      * @param $querymore
      * @param string $start
@@ -1405,17 +1440,17 @@ class Request
      */
     function openControls($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["controls"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1429,6 +1464,7 @@ class Request
 
 
 //results requirements 05/02/2007 by cacu100
+
     /**
      * @param $querymore
      * @param string $start
@@ -1436,16 +1472,16 @@ class Request
      */
     function openRequirements($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["requirements"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1474,6 +1510,7 @@ class Request
     }
 
 //results interesteds 05/02/2007 by cacu100 
+
     /**
      * @param $querymore
      * @param string $start
@@ -1481,16 +1518,16 @@ class Request
      */
     function openInteresteds($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["interesteds"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
@@ -1514,6 +1551,7 @@ class Request
     }
 
 //results requirement status 05/02/2007 by cacu100 
+
     /**
      * @param $querymore
      * @param string $start
@@ -1521,17 +1559,17 @@ class Request
      */
     function openRequirementStatus($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $databaseType, $initrequest;
+        global $tableCollab, $strings, $res, $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["requirement_status"];
         $sql .= ' ' . $querymore;
 
-        if ($databaseType == "mysql" && $start != "") {
+        if ($this->databaseType == "mysql" && $start != "") {
             $sql .= " LIMIT $start,$rows";
         }
 
-        if ($databaseType == "postgresql" && $start != "") {
+        if ($this->databaseType == "postgresql" && $start != "") {
             $sql .= " LIMIT $rows OFFSET $start";
         }
 
