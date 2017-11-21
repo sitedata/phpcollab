@@ -153,7 +153,7 @@ class Request
      */
     public function openSorting($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["sorting"];
@@ -211,7 +211,7 @@ class Request
      */
     public function openCalendar($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["calendar"];
@@ -256,7 +256,7 @@ class Request
      */
     public function openNotes($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["notes"];
@@ -297,7 +297,7 @@ class Request
      */
     public function openLogs($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["logs"];
@@ -335,7 +335,7 @@ class Request
      */
     public function openNotifications($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["notifications"];
@@ -384,7 +384,7 @@ class Request
      */
     public function openMembers($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         global $sql;
         $sql = $initrequest["members"];
@@ -431,7 +431,7 @@ class Request
      */
     public function openProjects($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["projects"];
         $sql .= ' ' . $querymore;
@@ -481,7 +481,7 @@ class Request
      */
     public function openFiles($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         global $sql;
         $sql = $initrequest["files"];
@@ -539,7 +539,7 @@ class Request
      */
     public function openOrganizations($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["organizations"];
@@ -588,7 +588,7 @@ class Request
      */
     public function openTopics($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["topics"];
@@ -631,7 +631,7 @@ class Request
      */
     public function openPosts($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["posts"];
         $sql .= ' ' . $querymore;
@@ -668,7 +668,7 @@ class Request
      */
     public function openAssignments($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["assignments"];
@@ -712,7 +712,7 @@ class Request
      */
     public function openReports($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["reports"];
@@ -755,7 +755,7 @@ class Request
      */
     public function openTeams($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
 
@@ -810,7 +810,7 @@ class Request
      */
     public function openTasks($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["tasks"];
@@ -871,7 +871,7 @@ class Request
      */
     public function openAvgTasks($querymore)
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $tableCollab, $row;
         $this->connectClass();
         $sql = "select avg(completion) from {$tableCollab["subtasks"]} where task = '$querymore'";
 
@@ -891,7 +891,7 @@ class Request
      */
     public function openSubtasks($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["subtasks"];
         $sql .= ' ' . $querymore;
@@ -948,7 +948,7 @@ class Request
      */
     public function openPhases($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["phases"];
         $sql .= ' ' . $querymore;
@@ -982,7 +982,7 @@ class Request
      */
     public function openUpdates($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["updates"];
         $sql .= ' ' . $querymore;
@@ -1018,7 +1018,7 @@ class Request
      */
     public function openSupportRequests($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["support_requests"];
         $sql .= ' ' . $querymore;
@@ -1057,7 +1057,7 @@ class Request
      */
     public function openSupportPosts($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["support_posts"];
         $sql .= ' ' . $querymore;
@@ -1091,7 +1091,7 @@ class Request
      */
     public function openBookmarks($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["bookmarks"];
         $sql .= ' ' . $querymore;
@@ -1132,7 +1132,7 @@ class Request
      */
     public function openBookmarksCategories($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["bookmarks_categories"];
         $sql .= ' ' . $querymore;
@@ -1161,7 +1161,7 @@ class Request
      */
     public function openInvoices($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["invoices"];
         $sql .= ' ' . $querymore;
@@ -1204,7 +1204,7 @@ class Request
      */
     public function openInvoicesItems($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["invoices_items"];
         $sql .= ' ' . $querymore;
@@ -1246,7 +1246,7 @@ class Request
      */
     public function openServices($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["services"];
         $sql .= ' ' . $querymore;
@@ -1276,7 +1276,7 @@ class Request
      */
     public function openNewsDesk($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["newsdeskposts"];
         $sql .= ' ' . $querymore;
@@ -1310,7 +1310,7 @@ class Request
      */
     public function openNewsDeskComments($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["newsdeskcomments"];
@@ -1343,7 +1343,7 @@ class Request
      */
     public function openNewsDeskRelated($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $tableCollab, $row;
 
         $this->connectClass();
 
@@ -1409,7 +1409,7 @@ class Request
      */
     function openFunctionalities($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["functionalities"];
@@ -1440,7 +1440,7 @@ class Request
      */
     function openControls($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["controls"];
@@ -1472,7 +1472,7 @@ class Request
      */
     function openRequirements($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["requirements"];
         $sql .= ' ' . $querymore;
@@ -1518,7 +1518,7 @@ class Request
      */
     function openInteresteds($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
         $this->connectClass();
         $sql = $initrequest["interesteds"];
         $sql .= ' ' . $querymore;
@@ -1559,7 +1559,7 @@ class Request
      */
     function openRequirementStatus($querymore, $start = "", $rows = "")
     {
-        global $tableCollab, $strings, $res, $row, $initrequest;
+        global $row, $initrequest;
 
         $this->connectClass();
         $sql = $initrequest["requirement_status"];
