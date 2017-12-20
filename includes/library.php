@@ -31,6 +31,8 @@
 **
 */
 use DebugBar\StandardDebugBar;
+use Symfony\Component\HttpFoundation\Request;
+
 $debug = false;
 
 define('APP_ROOT', dirname(dirname(__FILE__)));
@@ -77,7 +79,6 @@ ini_set("session.use_trans_sid", 0);
 if ($export != "true") {
     session_start();
 }
-
 // register_globals cheat code
 if (ini_get(register_globals) != "1") {
     //GET and POST VARS
@@ -93,7 +94,7 @@ if (ini_get(register_globals) != "1") {
         $GLOBALS[$key] = phpCollab\Util::replaceSpecialCharacters($val);
     }
 }
-
+$request = Request::createFromGlobals();
 $msg = phpCollab\Util::returnGlobal('msg', 'GET');
 $session = phpCollab\Util::returnGlobal('session', 'GET');
 $logout = phpCollab\Util::returnGlobal('logout', 'GET');
@@ -386,3 +387,23 @@ $sortingUser->openSorting($tmpquery);
 
 // :-)
 $setCopyright = "<!-- Powered by PhpCollab v$version //-->";
+
+
+/*
+ * Twig Test
+ */
+Twig_Autoloader::register();
+
+$twigLoader = new Twig_Loader_Filesystem( APP_ROOT . '/views');
+try {
+    $twigLoader->addPath(APP_ROOT . '/views/admin', 'admin');
+    $twigLoader->addPath(APP_ROOT . '/views/reports', 'reports');
+} catch (Twig_Error_Loader $e) {
+}
+$twig = new Twig_Environment($twigLoader, [
+    'cache' => false,
+    'debug' => true,
+]);
+$twig->addExtension(new Twig_Extension_Debug());
+// Todo: Refactor to NOT use globals
+$twig->addGlobal('globals', $GLOBALS);

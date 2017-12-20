@@ -1,8 +1,11 @@
 <?php
 
+
 $checkSession = "true";
 include_once '../includes/library.php';
 
+
+/*
 $strings = $GLOBALS["strings"];
 
 $setTitle .= " : " . $strings["my_reports"];
@@ -30,16 +33,23 @@ $block1->closePaletteIcon();
 
 $block1->sorting("reports", $sortingUser->sor_reports[0], "rep.name ASC", $sortingFields = [0 => "rep.name", 1 => "rep.created"]);
 
-$db = new phpCollab\Database();
+$db = new phpCollab\Database();*/
 
 $reports = new \phpCollab\Reports\Reports();
 
-$sorting = $block1->sortingValue;
+//$sorting = $block1->sortingValue;
 
 $dataSet = $reports->getReportsByOwner($idSession, $sorting);
 
-$reportCount = count($dataSet);
+//xdebug_var_dump($dataSet);
+//echo $twig->render('@reports/listreports.twig', array('reportlist' => $dataSet|default('No Reports found'), 'navItem' => 'reports'));
+echo $twig->render('@reports/listreports.twig', array('reportlist' => $dataSet, 'navItem' => 'reports'));
+//$reportCount = count($dataSet);
 
+
+
+
+/*
 if ($dataSet) {
     $block1->openResults();
     $block1->labels($labels = [0 => $strings["name"], 1 => $strings["created"]], "false");
@@ -64,3 +74,4 @@ $block1->paletteScript(2, "export", "../reports/exportreport.php?", "false,true,
 $block1->closePaletteScript($comptListReports, $dataSet['rep_id']);
 
 include APP_ROOT . '/themes/' . THEME . '/footer.php';
+*/
