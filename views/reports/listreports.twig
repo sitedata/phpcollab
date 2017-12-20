@@ -1,0 +1,56 @@
+{% extends "layout/base.twig" %}
+
+{% set pageTitle = 'My Reports' %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h3>{{ pageTitle }}</h3>
+    {% if report|length > 0 %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Name</th>
+            <th scope="col">Created</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for report in reportlist %}
+            <tr>
+                <th scope="row"><input type="checkbox"></th>
+                <td>{{ report.rep_name }}</td>
+                <td>{{ report.rep_created }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="nocontent">No Reports found</div>
+    {%  endif %}
+
+
+
+{% endblock %}
+
+{#
+      'rep_id' => string '1' (length=1)
+      'rep_owner' => string '3' (length=1)
+      'rep_name' => string 'Test' (length=4)
+      'rep_projects' => string 'ALL' (length=3)
+      'rep_members' => string 'ALL' (length=3)
+      'rep_priorities' => string 'ALL' (length=3)
+      'rep_status' => string 'ALL' (length=3)
+      'rep_date_due_end' => string '' (length=0)
+      'rep_created' => string '2016-05-04 00:50' (length=16)
+      'rep_date_complete_start' => string '' (length=0)
+      'rep_date_complete_end' => string '' (length=0)
+      'rep_clients' => string 'ALL' (length=3)
+#}
