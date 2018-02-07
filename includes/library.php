@@ -392,13 +392,14 @@ $setCopyright = "<!-- Powered by PhpCollab v$version //-->";
 /*
  * Twig Test
  */
-Twig_Autoloader::register();
+//Twig_Autoloader::register();
 
 $twigLoader = new Twig_Loader_Filesystem( APP_ROOT . '/views');
 try {
-    $twigLoader->addPath(APP_ROOT . '/views/admin', 'admin');
+//    $twigLoader->addPath(APP_ROOT . '/views/admin', 'admin');
     $twigLoader->addPath(APP_ROOT . '/views/reports', 'reports');
 } catch (Twig_Error_Loader $e) {
+    echo $e->getMessage();
 }
 $twig = new Twig_Environment($twigLoader, [
     'cache' => false,
