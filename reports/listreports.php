@@ -43,7 +43,15 @@ $dataSet = $reports->getReportsByOwner($idSession, $sorting);
 
 //xdebug_var_dump($dataSet);
 //echo $twig->render('@reports/listreports.twig', array('reportlist' => $dataSet|default('No Reports found'), 'navItem' => 'reports'));
-echo $twig->render('@reports/listreports.twig', array('reportlist' => $dataSet, 'navItem' => 'reports'));
+try {
+    echo $twig->render('@reports/listreports.twig', array('reportList' => $dataSet,'nav' => true, 'navItem' => 'reports'));
+} catch (Twig_Error_Loader $e) {
+    echo $e->getMessage();
+} catch (Twig_Error_Runtime $e) {
+    echo $e->getMessage();
+} catch (Twig_Error_Syntax $e) {
+    echo $e->getMessage();
+}
 //$reportCount = count($dataSet);
 
 
