@@ -13,7 +13,7 @@
 
 {% block content %}
     <h3>{{ pageTitle }}</h3>
-    {% if report|length > 0 %}
+    {% if reportList|length > 0 %}
     <table class="table table-striped">
         <thead>
         <tr>
@@ -23,10 +23,10 @@
         </tr>
         </thead>
         <tbody>
-        {% for report in reportlist %}
+        {% for report in reportList %}
             <tr>
                 <th scope="row"><input type="checkbox"></th>
-                <td>{{ report.rep_name }}</td>
+                <td><a href="resultsreport.php?id={{ report.rep_id }}">{{ report.rep_name }}</a></td>
                 <td>{{ report.rep_created }}</td>
             </tr>
         {% endfor %}
