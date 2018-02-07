@@ -49,18 +49,20 @@ if ($request->query->get('logout') == "true") {
     phpCollab\Util::headerFunction("../general/login.php?msg=logout");
     // Todo: don't redirect, pass the message on down to be rendered in the template
 }
-
 if ($request->query->get('auth') == "test") {
+    $user = $members->getMemberByLogin($_POST['usernameForm']);
+
 //    xdebug_var_dump($request->getContent());
 //    xdebug_var_dump($_POST);
 //    xdebug_var_dump($request->getPathInfo());
-    xdebug_var_dump($GLOBALS);
+    xdebug_var_dump($user);
     // Todo: etract this to an auth class?
 }
 */
 
 
 
+/*
 $tableCollab = $GLOBALS["tableCollab"];
 $strings = $GLOBALS["strings"];
 $idSession = (isset($_SESSION["idSession"]) && $_SESSION["idSession"] !== '') ? $_SESSION["idSession"] : null;
@@ -224,10 +226,11 @@ if ($auth == "on") {
 
             $session = session_id();
             error_log("set session to " . $session, 0);
-
+*/
             /**
              * Validate form data
              */
+/*
             $filteredData =  [];
             $filteredData['login'] = filter_var((string) $_POST['usernameForm'], FILTER_SANITIZE_STRING);
             $filteredData['password'] = filter_var((string) $passwordForm, FILTER_SANITIZE_STRING);
@@ -405,7 +408,7 @@ $block1->contentRow(
 $block1->closeContent();
 $block1->closeForm();
 
-include '../themes/' . THEME . '/footer.php';
+include '../themes/' . THEME . '/footer.php';*/
 
 
-//echo $twig->render('login.twig', array("nav" => false));
+echo $twig->render('login.twig', array("nav" => false));
