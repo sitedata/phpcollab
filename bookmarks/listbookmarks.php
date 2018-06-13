@@ -91,7 +91,7 @@ if ($view == "my") {
     );
 }
 
-$sorting = $block1->sortingValue;
+$sorting = $block1->getSortingValue();
 
 if ($view == "my") {
     $bookmarks = $bookmarks_gateway->getMyBookmarks($idSession, $sorting);
