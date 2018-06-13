@@ -62,10 +62,10 @@ SQL;
         $query = <<<SQL
 UPDATE {$this->tableCollab["logs"]} 
 SET 
-ip=:ip, 
-session=:session, 
-compt=:compt, 
-last_visite=:last_visite 
+ip = :ip, 
+session = :session,  
+compt = :compt, 
+last_visite = :last_visite 
 WHERE login = :login
 SQL;
 
@@ -77,6 +77,7 @@ SQL;
         $this->db->bind(':last_visite', $entryData['last_visite']);
         $this->db->bind(':login', $entryData['login']);
 
-        return $this->db->execute();
+        $operation = $this->db->execute();
+        return $operation;
     }
 }
