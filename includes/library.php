@@ -305,6 +305,7 @@ if ($checkSession != "false" && $demoSession != "true") {
         }
     }
     $checkLog = $logs->getLogByLogin($loginSession);
+
     if ($checkLog !== false) {
         if (session_id() != $checkLog["session"]) {
             phpCollab\Util::headerFunction("../index.php?session=false");
@@ -396,8 +397,8 @@ $setCopyright = "<!-- Powered by PhpCollab v$version //-->";
 
 $twigLoader = new Twig_Loader_Filesystem( APP_ROOT . '/views');
 try {
-//    $twigLoader->addPath(APP_ROOT . '/views/admin', 'admin');
     $twigLoader->addPath(APP_ROOT . '/views/reports', 'reports');
+    $twigLoader->addPath(APP_ROOT . '/views/general', 'general');
 } catch (Twig_Error_Loader $e) {
     echo $e->getMessage();
 }
