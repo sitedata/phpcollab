@@ -33,8 +33,8 @@ $checkSession = "true";
 include_once '../includes/library.php';
 include '../includes/customvalues.php';
 
-$setTitle .= " : Home Page";
-
+//$setTitle .= " : Home Page";
+/*
 $topics = new \phpCollab\Topics\Topics();
 $members = new \phpCollab\Members\Members();
 $projects = new \phpCollab\Projects\Projects();
@@ -52,7 +52,8 @@ if ($DateMois <= 0) {
 $DateMois = (strlen($DateMois) > 1) ? $DateMois : "0" . $DateMois;
 
 $dateFilter = "$DateAnnee-$DateMois-$DateJour";
-
+*/
+/*
 if ($action == 'publish') {
     if ($closeTopic == 'true') {
         $multi = strstr($id, '**');
@@ -105,7 +106,8 @@ if ($action == 'publish') {
         $msg = "removeToSite";
     }
 }
-
+*/
+/*
 include '../themes/' . THEME . '/header.php';
 
 $blockPage = new phpCollab\Block();
@@ -117,7 +119,7 @@ $blockPage->closeBreadcrumbs();
 if ($msg != "") {
     include '../includes/messages.php';
     $blockPage->messageBox($msgLabel);
-}
+}*/
 
 /**
  * start to show bookmark block
@@ -129,8 +131,10 @@ if ($showHomeBookmarks) {
 
     $block6->sorting("bookmarks", $sortingUser->sor_bookmarks[0], "boo.name ASC", $sortingFields = array(0 => "boo.name", 1 => "boo.category", 2 => "boo.shared"));
 
-    $bookmarksList = $bookmarks->getMyHomeBookmarks($idSession, $block6->sortingValue);
+    $bookmarksList = $bookmarks->getMyHomeBookmarks($idSession, $block6->getSortingValue());
 
+//    xdebug_var_dump($bookmarksList);
+/*
     $comptListBookmarks = count($bookmarksList);
 
     if ($comptListBookmarks != "0") {
@@ -192,64 +196,71 @@ if ($showHomeBookmarks) {
 
         $block6->closePaletteScript($comptListBookmarks, $bookmarkIds);
     }
+*/
+} else {
+    $bookmarksList = false;
 }
 
 /**
  * start to show projects block
  */
+
 if ($showHomeProjects) {
     $projects = new \phpCollab\Projects\Projects();
 
     $block1 = new phpCollab\Block();
 
-    $block1->form = "wbP";
-    $block1->openForm("../general/home.php#" . $block1->form . "Anchor");
+//    $block1->form = "wbP";
+//    $block1->openForm("../general/home.php#" . $block1->form . "Anchor");
+//
+//    $block1->headingToggle($strings["my_projects"]);
+//
+//    $block1->openPaletteIcon();
+//
+//    if ($profilSession == "0" || $profilSession == "1") {
+//        $block1->paletteIcon(0, "add", $strings["add"]);
+//        $block1->paletteIcon(1, "remove", $strings["delete"]);
+//        $block1->paletteIcon(2, "copy", $strings["copy"]);
+//    }
+//    $block1->paletteIcon(5, "info", $strings["view"]);
+//
+//    if ($profilSession == "0" || $profilSession == "1") {
+//        $block1->paletteIcon(6, "edit", $strings["edit"]);
+//    }
+//
+//    if ($enable_cvs == "true") {
+//        $block1->paletteIcon(7, "cvs", $strings["browse_cvs"]);
+//    }
+//
+//    //if mantis bug tracker enabled
+//    if ($enableMantis == "true") {
+//        $block1->paletteIcon(8, "bug", $strings["bug"]);
+//    }
+//
+//    $block1->closePaletteIcon();
 
-    $block1->headingToggle($strings["my_projects"]);
+//    $block1->sorting(
+//        "home_projects",
+//        $sortingUser->sor_home_projects[0],
+//        "pro.name ASC",
+//        $sortingFields = array(
+//        0 => "pro.id",
+//        1 => "pro.name",
+//        2 => "pro.priority",
+//        3 => "org.name",
+//        4 => "pro.status",
+//        5 => "mem2.login",
+//        6 => "pro.published"
+//    )
+//    );
 
-    $block1->openPaletteIcon();
+    $sorting = $block1->getSortingValue();
 
-    if ($profilSession == "0" || $profilSession == "1") {
-        $block1->paletteIcon(0, "add", $strings["add"]);
-        $block1->paletteIcon(1, "remove", $strings["delete"]);
-        $block1->paletteIcon(2, "copy", $strings["copy"]);
-    }
-    $block1->paletteIcon(5, "info", $strings["view"]);
+    $projectsList = $projects->getProjectList($idSession, $typeProjects, $sorting);
 
-    if ($profilSession == "0" || $profilSession == "1") {
-        $block1->paletteIcon(6, "edit", $strings["edit"]);
-    }
-
-    if ($enable_cvs == "true") {
-        $block1->paletteIcon(7, "cvs", $strings["browse_cvs"]);
-    }
-
-    //if mantis bug tracker enabled
-    if ($enableMantis == "true") {
-        $block1->paletteIcon(8, "bug", $strings["bug"]);
-    }
-
-    $block1->closePaletteIcon();
-
-    $block1->sorting(
-        "home_projects",
-        $sortingUser->sor_home_projects[0],
-        "pro.name ASC",
-        $sortingFields = array(
-        0 => "pro.id",
-        1 => "pro.name",
-        2 => "pro.priority",
-        3 => "org.name",
-        4 => "pro.status",
-        5 => "mem2.login",
-        6 => "pro.published"
-    )
-    );
-
-    $sorting = $block1->sortingValue;
-
-    $dataSet = $projects->getProjectList($idSession, $typeProjects, $sorting);
-    $projectsTopics = array();
+//    xdebug_var_dump($projectList);
+/*
+    $projectsTopics = [];
 
     $comptListProjects = count($dataSet);
 
@@ -314,11 +325,13 @@ if ($showHomeProjects) {
     }
 
     $block1->closePaletteScript($comptListProjects, $listProjects->tea_pro_id);
-}
+*/
+} else { $projectsList = false; }
 
 /**
  * start to show the task
  */
+/*
 if ($showHomeTasks) {
     $block2 = new phpCollab\Block();
 
@@ -418,10 +431,11 @@ if ($showHomeTasks) {
     $block2->paletteScript(4, "edit", "../tasks/edittask.php", "false,true,false", $strings["edit"]);
     $block2->closePaletteScript($comptListTasks, $listTasks->tas_id);
 }
-
+*/
 /**
  * start to show the subtask
  */
+/*
 if ($showHomeSubtasks) {
     $block3 = new phpCollab\Block();
 
@@ -500,11 +514,11 @@ if ($showHomeSubtasks) {
     $block3->closeToggle();
     $block3->closeFormResults();
 }
-
+*/
 /**
  * start to show the discussion block
  */
-
+/*
 if ($showHomeDiscussions) {
     $block4 = new phpCollab\Block();
 
@@ -578,11 +592,11 @@ if ($showHomeDiscussions) {
     $block4->paletteScript(4, "info", "threaddetail?", "false,true,false", $strings["view"]);
     $block4->closePaletteScript($comptListTopics, $listTopics->top_id);
 }
-
+*/
 /**
  * start to show the reports block
  */
-
+/*
 if ($showHomeReports) {
     $block5 = new phpCollab\Block();
 
@@ -632,11 +646,12 @@ if ($showHomeReports) {
     $block5->paletteScript(3, "export", "../reports/exportreport.php", "false,true,true", $strings["export"]);
     $block5->closePaletteScript($comptListReports, $listReports->rep_id);
 }
+*/
 
 /**
  * start to show notes block
  */
-if ($showHomeNotes) {
+/*if ($showHomeNotes) {
     $block6 = new phpCollab\Block();
     $block6->form = "saJ";
     $block6->openForm("../general/home.php?project=$project#" . $block6->form . "Anchor");
@@ -696,12 +711,13 @@ if ($showHomeNotes) {
     $block6->paletteScript(5, "info", "../notes/viewnote.php", "false,true,false", $strings["view"]);
     $block6->paletteScript(6, "edit", "../notes/editnote.php?project=$project", "false,true,false", $strings["edit"]);
     $block6->closePaletteScript($comptListNotes, $listNotes->note_id);
-}
+}*/
 
 /**
  * start to show newsdesk mod
  */
-if ($showHomeNewsdesk) {
+
+/*if ($showHomeNewsdesk) {
     $block7 = new phpCollab\Block();
     $block7->form = "saN";
     $block7->openForm("../general/home.php?project=$project#" . $block7->form . "Anchor");
@@ -786,6 +802,16 @@ if ($showHomeNewsdesk) {
 
     $block7->paletteScript(5, "info", "../newsdesk/viewnews.php", "false,true,false", $strings["view"]);
     $block7->closePaletteScript($comptPosts, $listPosts->news_id);
-}
+}*/
 
-include '../themes/' . THEME . '/footer.php';
+//include '../themes/' . THEME . '/footer.php';
+
+try {
+    echo $twig->render('@general/home.twig', ["nav" => true, "navItem" => "home", "bookmarks" => $bookmarksList, "projects" => $projectsList]);
+} catch (Twig_Error_Loader $e) {
+    echo $e->getMessage();
+} catch (Twig_Error_Runtime $e) {
+    echo $e->getMessage();
+} catch (Twig_Error_Syntax $e) {
+    echo $e->getMessage();
+}
