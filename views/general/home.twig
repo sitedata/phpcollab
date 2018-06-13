@@ -1,0 +1,83 @@
+{% extends "layout/base.twig" %}
+
+{% set pageTitle = 'My Reports' %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+{% block content %}
+    <h1>Home</h1>
+
+    {% if bookmarks|length > 0 %}
+        {# TODO: add sorting capabilities #}
+        <section class="card">
+            <h3 class="card-header">Boomarks</h3>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Owner</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for bookmark in bookmarks %}
+                        <tr>
+                            <th scope="row"><input type="checkbox"></th>
+                            <td><a href="/bookmarks/viewbookmark.php?id={{ bookmark.boo_id }}">{{ bookmark.boo_name }}</a></td>
+                            <td>{{ bookmark.boo_boocat_name }}</td>
+                            <td>{{ bookmark.boo_mem_login }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {%  endif %}
+
+
+    {% if projects|length > 0 %}
+        {# TODO: add sorting capabilities #}
+        <section>
+            <h3>Projects</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Project</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Client Organization</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Project Site</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for project in projects %}
+                    <tr>
+                        <th scope="row"><input type="checkbox"></th>
+                        <td><a href="/projects/viewproject.php?id={{ project.pro_id }}">{{ project.pro_id }}</a></td>
+                        <td><a href="/projects/viewproject.php?id={{ project.pro_id }}">{{ project.pro_name }}</a></td>
+                        {# Add a getPriority method where I pass in the priority and it returns the name #}
+                        <td>{{ project.pro_priority }}</td>
+                        <td>{{ project.pro_org_name }}</td>
+                        {# Add a getStatus method where I pass in the status and it returns the name #}
+                        <td>{{ project.pro_status }}</td>
+                        <td>{{ project.pro_mem_name }}</td>
+                        {# Add a getProjectSite method where I pass in the flag and it returns the url #}
+                        <td>{{ project.pro_published }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    {%  endif %}
+
+
+{% endblock %}
