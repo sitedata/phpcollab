@@ -32,8 +32,6 @@ $members = new \phpCollab\Members\Members();
 $logs = new \phpCollab\Logs\Logs();
 
 
-
-/*
 if ($request->query->get('logout') == "true") {
     $tmpquery1 = "UPDATE {$tableCollab["logs"]} SET connected='' WHERE login = :login_id";
     $dbParams = ["login_id" => $idSession];
@@ -49,6 +47,7 @@ if ($request->query->get('logout') == "true") {
     phpCollab\Util::headerFunction("../general/login.php?msg=logout");
     // Todo: don't redirect, pass the message on down to be rendered in the template
 }
+/*
 if ($request->query->get('auth') == "test") {
     $user = $members->getMemberByLogin($_POST['usernameForm']);
 
@@ -56,7 +55,7 @@ if ($request->query->get('auth') == "test") {
 //    xdebug_var_dump($_POST);
 //    xdebug_var_dump($request->getPathInfo());
     xdebug_var_dump($user);
-    // Todo: etract this to an auth class?
+    // Todo: extract this to an auth class?
 }
 */
 
@@ -81,13 +80,14 @@ if ($logout == "true") {
 
     phpCollab\Util::headerFunction("../general/login.php?msg=logout");
 }
-
-$auth = phpCollab\Util::returnGlobal('auth', 'GET');
-$usernameForm = phpCollab\Util::returnGlobal('usernameForm', 'POST');
-$passwordForm = phpCollab\Util::returnGlobal('passwordForm', 'POST');
+*/
+$auth = phpCollab\Util::returnGlobal('auth', 'POST');
+$usernameForm = phpCollab\Util::returnGlobal('username', 'POST');
+$passwordForm = phpCollab\Util::returnGlobal('password', 'POST');
 
 $match = false;
 $ssl = false;
+
 
 if (!empty($SSL_CLIENT_CERT) && !$logout && $auth != "test") {
     $auth = "on";
@@ -115,7 +115,6 @@ if (!empty($SSL_CLIENT_CERT) && !$logout && $auth != "test") {
                     $error = $strings["login_password"];
                 } else {
                     $auth = "on";
-
                     if ($rememberForm == "on") {
                         $oneyear = 22896000;
                         $storePwd = phpCollab\Util::getPassword($passwordForm);
@@ -176,7 +175,6 @@ if ($auth == "on") {
                 $match = true;
             }
         }
-
         if ($match === true) {
 
             //crypt password in session
@@ -225,14 +223,15 @@ if ($auth == "on") {
 
 
             $session = session_id();
-            error_log("set session to " . $session, 0);
-*/
+
+//            xdebug_var_dump($session);
+//            error_log("set session to " . $session, 0);
+
             /**
              * Validate form data
              */
-/*
             $filteredData =  [];
-            $filteredData['login'] = filter_var((string) $_POST['usernameForm'], FILTER_SANITIZE_STRING);
+            $filteredData['login'] = filter_var((string) $_POST['username'], FILTER_SANITIZE_STRING);
             $filteredData['password'] = filter_var((string) $passwordForm, FILTER_SANITIZE_STRING);
             $filteredData['ip'] = filter_var($ip, FILTER_SANITIZE_STRING);
             $filteredData['session'] = $session;
@@ -294,6 +293,7 @@ if ($auth == "on") {
                                     phpCollab\Util::headerFunction("../administration/admin.php");
                                 }
                             } else {
+
                                 phpCollab\Util::headerFunction("../general/home.php");
                             }
                         }
@@ -318,7 +318,7 @@ if ($demoMode == "true") {
     $passwordForm = "demo";
 }
 
-
+/*
 $notLogged = "true";
 $bodyCommand = "onLoad='document.loginForm.usernameForm.focus();'";
 include '../themes/' . THEME . '/header.php';
@@ -411,4 +411,4 @@ $block1->closeForm();
 include '../themes/' . THEME . '/footer.php';*/
 
 
-echo $twig->render('login.twig', array("nav" => false));
+echo $twig->render('login.twig', array("nav" => false, "error" => $error));
