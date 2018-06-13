@@ -315,7 +315,7 @@ if ($fileManagement == "true") {
     $block2->closePaletteIcon();
     $block2->sorting("files", $sortingUser->sor_files[0], "fil.name ASC", $sortingFields = [0 => "fil.extension", 1 => "fil.name", 2 => "fil.owner", 3 => "fil.date", 4 => "fil.status", 5 => "fil.published"]);
 
-    $listFiles = $files->getFilesByTaskIdAndVCParentEqualsZero($id, $block2->sortingValue);
+    $listFiles = $files->getFilesByTaskIdAndVCParentEqualsZero($id, $block2->getSortingValue());
 
     if ($listFiles) {
         $block2->openResults();
@@ -391,7 +391,7 @@ $block3->openForm("../tasks/viewtask.php?id=$id#" . $block3->form . "Anchor");
 $block3->headingToggle($strings["assignment_history"]);
 $block3->sorting("assignment", $sortingUser->sor_assignment[0], "ass.assigned DESC", $sortingFields = [0 => "ass.comments", 1 => "mem1.login", 2 => "mem2.login", 3 => "ass.assigned"]);
 
-$listAssign = $assignments->getAssignmentsByTaskId($id, $block3->sortingValue);
+$listAssign = $assignments->getAssignmentsByTaskId($id, $block3->getSortingValue());
 
 $block3->openResults($checkbox = "false");
 $block3->labels($labels = [0 => $strings["comment"], 1 => $strings["assigned_by"], 2 => $strings["to"], 3 => $strings["assigned_on"]], "false");
@@ -441,7 +441,7 @@ if ($teamMember === true || $profilSession == "5") {
 $block4->closePaletteIcon();
 $block4->sorting("subtasks", $sortingUser->sor_subtasks[0], "subtas.name ASC", $sortingFields = [0 => "subtas.name", 1 => "subtas.priority", 2 => "subtas.status", 3 => "subtas.completion", 4 => "subtas.due_date", 5 => "mem.login", 6 => "subtas.published"]);
 
-$listSubtasks = $tasks->getSubtasksByParentTaskId($id, $block4->sortingValue);
+$listSubtasks = $tasks->getSubtasksByParentTaskId($id, $block4->getSortingValue());
 
 if ($listSubtasks) {
     $block4->openResults();

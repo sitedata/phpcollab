@@ -85,7 +85,7 @@ $block1->sorting(
 );
 
 // TODO: add limits back in
-$sorting = $block1->sortingValue;
+$sorting = $block1->getSortingValue();
 
 $dataSet = $projects_gateway->getProjectList($idSession, $typeProjects, $sorting);
 
