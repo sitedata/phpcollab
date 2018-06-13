@@ -12,9 +12,10 @@ class Block
 {
     protected $help, $strings, $iconWidth, $iconHeight, $bgColor, $fgColor,
         $oddColor, $evenColor, $highlightOn, $class, $highlightOff, $theme,
-        $pathImg, $themeImgPath, $accountTotal, $account, $sortingOrders,
-        $sortingFields, $sortingArrows, $sortingStyles, $explode, $labels,
+        $pathImg, $themeImgPath, $accountTotal, $account, $explode, $labels,
         $sitePublish, $navigation, $navigationTotal;
+
+    protected $sortingOrders, $sortingFields, $sortingArrows, $sortingStyles, $sortingRef, $sortingValue, $sortingDefault;
     public $form;
 
     /**
@@ -327,6 +328,18 @@ class Block
         echo "document." . $this->form . "Form.tt = '" . $this->form . "tt';</script>";
     }
 
+    public function getSortingValue()
+    {
+        return $this->sortingValue;
+    }
+
+//    public function setSortingValue($sortingValue)
+//    {
+//        $this->sortingValue = $sortingValue;
+//    }
+
+
+
     /**
      * Define sorting to apply on a list block
      * @param string $sortingRef Row reference in sorting table
@@ -341,7 +354,6 @@ class Block
             $this->sortingRef = $sortingRef;
         }
         if ($sortingValue != "") {
-
             $this->sortingValue = $sortingValue;
         }
         if ($sortingDefault != "") {
