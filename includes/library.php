@@ -32,6 +32,10 @@
 */
 use DebugBar\StandardDebugBar;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\Translator;
+
 
 $debug = false;
 
@@ -106,6 +110,20 @@ $logouttimeSession = phpCollab\Util::returnGlobal('logouttimeSession', 'SESSION'
 
 $parse_start = phpCollab\Util::getMicroTime();
 
+$twigLoader = new Twig_Loader_Filesystem( APP_ROOT . '/views');
+
+try {
+    $twigLoader->addPath(APP_ROOT . '/views/reports', 'reports');
+    $twigLoader->addPath(APP_ROOT . '/views/general', 'general');
+} catch (Twig_Error_Loader $e) {
+    echo $e->getMessage();
+}
+$twig = new Twig_Environment($twigLoader, [
+    'cache' => false,
+    'debug' => true,
+]);
+
+
 //database update array
 $updateDatabase = array(
     0 => "1.0",
@@ -120,64 +138,161 @@ $updateDatabase = array(
     9 => "2.5"
 );
 
+
+
 //languages array
-$langValue = array(
-    "en" => "English",
-    "es" => "Spanish",
-    "fr" => "French",
-    "it" => "Italian",
-    "pt" => "Portuguese",
-    "da" => "Danish",
-    "no" => "Norwegian",
-    "nl" => "Dutch",
-    "de" => "German",
-    "zh" => "Chinese simplified",
-    "uk" => "Ukrainian",
-    "pl" => "Polish",
-    "in" => "Indonesian",
-    "ru" => "Russian",
-    "az" => "Azerbaijani",
-    "ko" => "Korean",
-    "zh-tw" => "Chinese traditional",
-    "ca" => "Catalan",
-    "pt-br" => "Brazilian Portuguese",
-    "et" => "Estonian",
-    "bg" => "Bulgarian",
-    "ro" => "Romanian",
-    "hu" => "Hungarian",
-    "cs-iso" => "Czech (iso)",
-    "cs-win1250" => "Czech (win1250)",
-    "is" => "Icelandic",
-    "sk-win1250" => "Slovak (win1250)",
-    "tr" => "Turkish",
-    "lv" => "Latvian",
-    "ar" => "Arabic",
-    "ja" => "Japanese"
-);
+//$langValue = array(
+//    "ar" => "Arabic",
+//    "az" => "Azerbaijani",
+//    "bg" => "Bulgarian",
+//    "ca" => "Catalan",
+//    "cs-iso" => "Czech (iso)",
+//    "cs-win1250" => "Czech (win1250)",
+//    "da" => "Danish",
+//    "de" => "German",
+//    "en" => "English",
+//    "es" => "Spanish",
+//    "et" => "Estonian",
+//    "fr" => "French",
+//    "hu" => "Hungarian",
+//    "in" => "Indonesian",
+//    "is" => "Icelandic",
+//    "it" => "Italian",
+//    "ja" => "Japanese",
+//    "ko" => "Korean",
+//    "lv" => "Latvian",
+//    "nl" => "Dutch",
+//    "no" => "Norwegian",
+//    "pl" => "Polish",
+//    "pt" => "Portuguese",
+//    "pt-br" => "Brazilian Portuguese",
+//    "ro" => "Romanian",
+//    "ru" => "Russian",
+//    "sk-win1250" => "Slovak (win1250)",
+//    "tr" => "Turkish",
+//    "uk" => "Ukrainian",
+//    "zh" => "Chinese simplified",
+//    "zh-tw" => "Chinese traditional",
+//);
+
+$lang = new \phpCollab\Languages\Languages();
 
 
+if ( $request->cookies->get('lang') ) {
+    $langDefault = $request->cookies->get('lang');
+}
+
+xdebug_var_dump($HTTP_ACCEPT_LANGUAGE);
 //language browser detection
 if ($langDefault == "") {
     if (isset($HTTP_ACCEPT_LANGUAGE)) {
         $plng = explode(",", $HTTP_ACCEPT_LANGUAGE);
-        if (count($plng) > 0) {
-            while (list($k, $v) = each($plng)) {
-                $k = explode(";", $v, 1);
-                $k = explode("-", $k[0]);
+//        xdebug_var_dump($plng);
 
-                if (file_exists("../languages/lang_" . $k[0] . ".php")) {
-                    $langDefault = $k[0];
+        if (count($plng) > 0) {
+            foreach ($plng as $value) {
+                $k = explode(";", $value, 2)[0];
+
+//                xdebug_var_dump($lang->checkLanguageFiles($k));
+                if ( $lang->checkLanguageFiles($k) ) {
+                    $langDefault = $k;
+                    xdebug_var_dump($langDefault);
                     break;
                 }
-                $langDefault = "en";
+
+                xdebug_var_dump("post foreach");
+//                } else {
+//                    $langDefault = "en";
+//                }
             }
         } else {
             $langDefault = "en";
         }
+
+//die();
+        // Check to see if there is a language file matching the "preferred/top" choice
+//        xdebug_var_dump(file_exists("../languages/lang_" . $plng[0] . ".php"));
+
+//        if (file_exists(APP_ROOT . "/languages/lang_" . $plng[0] . ".php")) {
+//            $langDefault = $plng[0];
+//        } else {
+//            // The preferred file didn't match, so continue down the list by spliting on the "-"
+//            if (count($plng) > 0) {
+//                while (list($k, $v) = each($plng)) {
+//
+//                    $k = explode(";", $v, 1);
+//                    xdebug_var_dump($k);
+//                    $k = explode("-", $k[0]);
+//
+//                    // First search for an exact match, then search for a wildcard match
+////                    xdebug_var_dump(file_exists("../languages/lang_" . $k[0] . ".php"));
+//
+//
+//
+//                    if (file_exists("../languages/lang_" . $k[0] . ".php")) {
+//                        $langDefault = $k[0];
+//                        break;
+//                    }
+//
+//                    $list = glob("../languages/lang_" . $k[0] . "*.php");
+////                    echo "glob:<br>";
+//                    var_dump($list);
+//
+//                    $langDefault = "en";
+//                }
+//            } else {
+//                $langDefault = "en";
+//            }
+//        }
     } else {
         $langDefault = "en";
     }
 }
+
+//xdebug_var_dump($lang->getLanguage());
+$langValue = $lang->setLanguage($langDefault);
+
+//$langValue = $lang->getLanguages();
+//$translator = new Translator($langDefault);
+
+//die();
+
+// Translation functionality
+//$translator = new Translator('fr_FR');
+//$translator = new Translator('en_US', new \Symfony\Component\Translation\MessageSelector());
+//$translator = new Translator('fr');
+//$translator->setFallbackLocale('en_US');
+
+//$translator->addLoader('po', new \Symfony\Component\Translation\Loader\PoFileLoader());
+//$translator->addResource('po', APP_ROOT . '/translations/messages.en.po', 'en');
+//if (isset($langDefault)) {
+/**
+    $translator = new Translator($langDefault);
+*/
+    //} else {
+//    $translator = new Translator('en');
+//}
+
+////$translator->addLoader('php', new \Symfony\Component\Translation\Loader\PhpFileLoader());
+
+//$lang->loadLanguageFiles();
+
+//$translator->addResource('php', APP_ROOT . '/translations/messages.en.php', 'en');
+//$translator->addResource('php', APP_ROOT . '/translations/messages.pt_br.php', 'pt-BR');
+//$translator->addResource('php', APP_ROOT . '/translations/messages.fr.php', 'fr');
+/**
+$twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
+ */
+
+$twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension( $lang->getTranslator() ));
+
+//$translator->addLoader('php', new \Symfony\Component\Translation\Loader\PhpFileLoader());
+//$translator->addResource('php', APP_ROOT . '/translations/messages.en.php', 'en_US');
+//$translator->addResource('php', APP_ROOT . '/translations/messages.fr.php', 'fr_FR');
+$twig->addGlobal('languages', $langValue);
+$twig->addGlobal('defaultLanguage', $langDefault);
+
+
 
 //set language session
 if ($langDefault != "") {
@@ -192,37 +307,48 @@ if ($languageSession == "") {
     $lang = $languageSession;
 }
 
+//$res = new Response();
+//$res->headers->setCookie(new Cookie('lang', $langDefault));
+////$res->headers->setCookie( $cookie );
+//$res->send();
+
+//xdebug_var_dump($langDefault);
+//$cookie = new \Symfony\Component\HttpFoundation\Cookie(
+//    'lang',    // Cookie name.
+//    $langDefault,    // Cookie value.
+//    time() + ( 2 * 365 * 24 * 60 * 60)  // Expires 2 years.
+//);
 
 $settings = null;
 //settings and date selector includes
 if ($indexRedirect == "true") {
-    include 'includes/settings.php';
+    include APP_ROOT . '/includes/settings.php';
 
     if (defined('CONVERTED') && CONVERTED) {
-        include_once 'includes/classes/settings.class.php';
+        include_once APP_ROOT . '/includes/classes/settings.class.php';
         $settings = new Settings(true);
         $settings->makeGlobal();
     }
 
-    include 'includes/initrequests.php';
+    include APP_ROOT . '/includes/initrequests.php';
 
-    include 'languages/lang_en.php';
-    include 'languages/lang_' . $lang . '.php';
-    include 'languages/help_' . $lang . '.php';
+    include APP_ROOT . '/languages/lang_en.php';
+//    include APP_ROOT . '/languages/lang_' . $lang . '.php';
+//    include APP_ROOT . '/languages/help_' . $lang . '.php';
 } else {
-    include '../includes/settings.php';
+    include APP_ROOT . '/includes/settings.php';
 
     if (defined('CONVERTED') && CONVERTED) {
-        include_once '../includes/classes/settings.class.php';
+        include_once APP_ROOT . '/includes/classes/settings.class.php';
         $settings = new Settings(true);
         $settings->makeGlobal();
     }
 
-    include '../includes/initrequests.php';
+    include APP_ROOT . '/includes/initrequests.php';
 
-    include '../languages/lang_en.php';
-    include '../languages/lang_' . $lang . '.php';
-    include '../languages/help_' . $lang . '.php';
+//    include APP_ROOT . '/languages/lang_en.php';
+//    include APP_ROOT . '/languages/lang_' . $lang . '.php';
+//    include APP_ROOT . '/languages/help_' . $lang . '.php';
 }
 
 $logs = new \phpCollab\Logs\Logs();
@@ -395,17 +521,40 @@ $setCopyright = "<!-- Powered by PhpCollab v$version //-->";
  */
 //Twig_Autoloader::register();
 
-$twigLoader = new Twig_Loader_Filesystem( APP_ROOT . '/views');
-try {
-    $twigLoader->addPath(APP_ROOT . '/views/reports', 'reports');
-    $twigLoader->addPath(APP_ROOT . '/views/general', 'general');
-} catch (Twig_Error_Loader $e) {
-    echo $e->getMessage();
-}
-$twig = new Twig_Environment($twigLoader, [
-    'cache' => false,
-    'debug' => true,
-]);
+//$loader = new Twig_Loader_Filesystem('./templates');
+//$twig = new Twig_Environment($loader, array(
+//    //'cache' => './cache',
+//    'cache' => false
+//));
+
+
+
+
+
+/* i18n */
+//$twig->addExtension(new Twig_Extensions_Extension_I18n());
+//
+//$availableLanguages = array(
+//    'en' => 'en_US',
+//    'default' => 'en_US'
+//);
+
 $twig->addExtension(new Twig_Extension_Debug());
+
+// Set language to French
+//putenv('LC_ALL=en_US');
+//setlocale(LC_ALL, 'en_US');
+//
+//// Specify the location of the translation tables
+//bindtextdomain('myAppPhp', 'tran/locale');
+//bind_textdomain_codeset('myAppPhp', 'UTF-8');
+//
+//// Choose domain
+//textdomain('myAppPhp');
+
+//$block1->heading($translator->trans('Globular Clusters')); // .po example
+
+
+
 // Todo: Refactor to NOT use globals
 $twig->addGlobal('globals', $GLOBALS);

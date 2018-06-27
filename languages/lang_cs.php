@@ -4,41 +4,11 @@
 #Path by root: ../languages/lang_cs-iso.php
 
 //translator(s): Pavel Dostal <pavel.dostal@xone.cz>
-return [
-    "byteUnits" => array(
-        0 => 'Bytes',
-        1 => 'KB',
-        2 => 'MB',
-        3 => 'GB'
-    ),
-    "dayNameArray" => [
-        1 =>"Pondělí",
-        2 =>"Úterý",
-        3 =>"Středa",
-        4 =>"Čtvrtek",
-        5 =>"Pátek",
-        6 =>"Sobota",
-        7 =>"Neděle"
-    ],
-    "monthNameArray" => [
-        1 => "Leden",
-        2 => "Únor",
-        3 => "Březen",
-        4 => "Duben",
-        5 => "Květen",
-        6 => "Červen",
-        7 => "Červenec",
-        8 => "Srpen",
-        9 => "Září",
-        10 => "Říjen",
-        11 => "Listopad",
-        12 => "Prosinec"
-    ],
-];
+$byteUnits = array('Bytes', 'KB', 'MB', 'GB');
 
-//$byteUnits = array('Bytes', 'KB', 'MB', 'GB');
+$dayNameArray = array(1 =>"Pondělí", 2 =>"Úterý", 3 =>"Středa", 4 =>"Čtvrtek", 5 =>"Pátek", 6 =>"Sobota", 7 =>"Neděle");
 
-
+$monthNameArray = array(1=> "Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec");
 
 $status = array(0 => "Zakázka kompletní", 1 => "Kompletní", 2 => "Nenastartovaný", 3 => "Otevřený", 4 => "Pozastavený");
 
